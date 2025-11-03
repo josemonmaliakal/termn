@@ -61,10 +61,11 @@ void openFileAction(){
 }
 int main(int argc , char* argv[]){
     int action=0;
+    int choice; 
     if (argc > 2){
         cout << "Invalid Arguments: Expected only one filename" << endl;
         cout << "Usage: ./termn <filename>" << endl;
-        return 1;
+        return 0;
     }
     if (argc ==2) {
         string filename = argv[1];
@@ -72,18 +73,18 @@ int main(int argc , char* argv[]){
         if (action == 0) {
             cout << "File not found. Creating new file: " << filename << endl;
             createFile(filename);
+            cout << "Good Bye ! " << endl;
+            return 0;            
         }
-        
-    }    
-    int choice; 
-
+    }
+    
     while(true){
         showMenu();
         cin >> choice;
         cin.ignore();
 
         switch(choice){
-            case 1 : createFileAction();cout << "Good Bye ! ";return 0; 
+            case 1 : createFileAction();cout << "Good Bye ! " << endl;return 0; 
             case 2 : openFileAction();break;
             case 3 : cout << "GoodBye !!!" ;return 0;
             default: cout << "Invalid Choice \n";break; 
