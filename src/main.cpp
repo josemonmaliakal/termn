@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include "file_utils.h"
 using namespace std;
 
 void showMenu() {
@@ -12,22 +13,20 @@ void showMenu() {
 }
 void createFile(const string& filename) {   
 
-    ofstream file(filename);
-    if (!file) {
-        cerr << "Error creating file!\n";
-        return;
-    }
-
+    vector<string> lines;
     cout << "Start typing your text (type ':wq' on a new line to save & exit):\n";
     string line;
     while (true) {
         getline(cin, line);
         if (line == ":wq")
             break;
-        file << line << "\n";
+        lines.push_back(line);
     }
 
-    file.close();
+    if (!writeToFile(filename, lines)) {
+        cerr << "Error creating file!\n";
+        return;
+    }
     cout << "File saved successfully!\n";
 }
 void createFileAction(){
@@ -60,7 +59,6 @@ void openFileAction(){
     openFile(filename);    
 }
 int main(int argc , char* argv[]){
-    int action=0;
     int choice; 
     if (argc > 2){
         cout << "Invalid Arguments: Expected only one filename" << endl;
@@ -68,6 +66,9 @@ int main(int argc , char* argv[]){
         return 0;
     }
     if (argc ==2) {
+        /* argc ==2 then first name is the application name and second name 
+        is assumed to be the filename 
+        */
         string filename = argv[1];
         int action = openFile(filename);
         if (action == 0) {
@@ -76,13 +77,11 @@ int main(int argc , char* argv[]){
             cout << "Good Bye ! " << endl;
             return 0;            
         }
-    }
-    
+    }    
     while(true){
         showMenu();
         cin >> choice;
         cin.ignore();
-
         switch(choice){
             case 1 : createFileAction();cout << "Good Bye ! " << endl;return 0; 
             case 2 : openFileAction();break;
