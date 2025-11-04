@@ -2,15 +2,12 @@
 #include <string>
 #include <fstream>
 #include <vector>
-#include "file_utils.h"
+#include <cstdlib>  // For system("clear")
+#include "../include/file_utils.h"
+#include "../include/ui.h"
 using namespace std;
 
-void showMenu() {
-    cout << "1. Create new file\n";
-    cout << "2. Open existing file\n";
-    cout << "3. Exit\n";
-    cout << "Enter your choice: ";
-}
+
 void createFile(const string& filename) {   
 
     vector<string> lines;
@@ -58,8 +55,13 @@ void openFileAction(){
     cin.ignore();
     openFile(filename);    
 }
+
+
+
+
 int main(int argc , char* argv[]){
     int choice; 
+    initUI();
     if (argc > 2){
         cout << "Invalid Arguments: Expected only one filename" << endl;
         cout << "Usage: ./termn <filename>" << endl;
@@ -73,7 +75,7 @@ int main(int argc , char* argv[]){
         int action = openFile(filename);
         if (action == 0) {
             cout << "File not found. Creating new file: " << filename << endl;
-            createFile(filename);
+            runEditor(filename);
             cout << "Good Bye ! " << endl;
             return 0;            
         }

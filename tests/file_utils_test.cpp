@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../src/file_utils.h"
+#include "../include/file_utils.h"
 #include <fstream>
 #include <cstdio> // for remove()
 
