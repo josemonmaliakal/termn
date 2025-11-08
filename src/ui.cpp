@@ -34,8 +34,11 @@ void drawFooter(WINDOW* win) {
     wrefresh(win);
 }
 
-void runEditor(const string& filename) {
+void runEditor(const string& initialFilename) {
     int height, width;
+    string filename = initialFilename;
+    string saveMsg = "File Cancelled!";
+
     getmaxyx(stdscr, height, width);
 
     WINDOW* titlebar = newwin(1, width, 0, 0);
@@ -44,7 +47,7 @@ void runEditor(const string& filename) {
 
     scrollok(textwin, TRUE);
 
-    drawTitle(titlebar, filename);
+    drawTitle(titlebar, filename.empty() ? "[New File]" : filename);
     drawFooter(footer);
 
     vector<string> buffer;
@@ -53,11 +56,28 @@ void runEditor(const string& filename) {
 
     while ((ch = wgetch(textwin)) != 24) { // Ctrl+X
         if (ch == 19) { // Ctrl+S
-            ofstream out(filename);
-            for (auto& line : buffer)
-                out << line << "\n";
-            out.close();
-            mvwprintw(footer, 0, width - 20, "File saved!");
+            // Ask for filename if none
+            if (filename.empty()) {
+                echo();
+                mvwprintw(footer, 0, 0, "Save as: ");
+                wrefresh(footer);
+                char fname[256];
+                wgetnstr(footer, fname, 255);
+                filename = fname;
+                noecho();
+                // Clear footer after input
+                werase(footer);
+                drawFooter(footer);
+            
+            }
+            if (!filename.empty()){
+                ofstream out(filename);
+                for (auto& line : buffer)
+                    out << line << "\n";
+                out.close();
+                saveMsg = "File saved!";
+            }
+            mvwprintw(footer, 0, width - 20, "%s", saveMsg.c_str());  
             wrefresh(footer);
             continue;
         }
@@ -88,9 +108,3 @@ void runEditor(const string& filename) {
     shutdownUI();
 }
 
-void showMenu() {
-    cout << "1. Create new file\n";
-    cout << "2. Open existing file\n";
-    cout << "3. Exit\n";
-    cout << "Enter your choice: ";
-}

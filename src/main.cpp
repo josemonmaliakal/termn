@@ -60,7 +60,7 @@ void openFileAction(){
 
 
 int main(int argc , char* argv[]){
-    int choice; 
+    
     initUI();
     if (argc > 2){
         cout << "Invalid Arguments: Expected only one filename" << endl;
@@ -79,16 +79,10 @@ int main(int argc , char* argv[]){
             cout << "Good Bye ! " << endl;
             return 0;            
         }
-    }    
-    while(true){
-        showMenu();
-        cin >> choice;
-        cin.ignore();
-        switch(choice){
-            case 1 : createFileAction();cout << "Good Bye ! " << endl;return 0; 
-            case 2 : openFileAction();break;
-            case 3 : cout << "GoodBye !!!" ;return 0;
-            default: cout << "Invalid Choice \n";break; 
-        }
     }
+    /* In default case new file should get open , 
+    and ask name only when the time to save*/
+    
+    runEditor("");
+          
 }
