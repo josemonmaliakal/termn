@@ -70,6 +70,12 @@ void runEditor(const string& initialFilename) {
                 drawFooter(footer);
             
             }
+            if (!currentLine.empty()) {
+                // If not pressed enter pushes current line content to file
+                buffer.push_back(currentLine);
+                currentLine.clear();
+
+            }
             if (!filename.empty()){
                 ofstream out(filename);
                 for (auto& line : buffer)
@@ -99,6 +105,8 @@ void runEditor(const string& initialFilename) {
         }
         wrefresh(textwin);
     }
+
+    if (!currentLine.empty()) buffer.push_back(currentLine);
 
     ofstream out(filename);
     for (auto& line : buffer)
