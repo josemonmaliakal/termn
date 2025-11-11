@@ -50,8 +50,23 @@ void runEditor(const string& initialFilename) {
     drawTitle(titlebar, filename.empty() ? "[New File]" : filename);
     drawFooter(footer);
 
+
     vector<string> buffer;
     string currentLine;
+
+    // Load file if it exists
+
+    if (!filename.empty()){
+        ifstream infile(filename);
+        string line;
+        while (getline(infile, line )){
+            buffer.push_back(line);
+            wprintw(textwin, "%s\n", line.c_str());
+
+        }
+        infile.close();
+    }
+
     int ch;
 
     while ((ch = wgetch(textwin)) != 24) { // Ctrl+X
