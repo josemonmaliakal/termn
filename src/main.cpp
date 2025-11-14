@@ -59,24 +59,9 @@ void openFileAction(){
 
 
 
-int main(int argc , char* argv[]){
-
-    string filename="";    
-    initUI();
-    if (argc > 2){
-        cout << "Invalid Arguments: Expected only one filename" << endl;
-        cout << "Usage: ./termn <filename>" << endl;
-        return 0;
-    }
-    if (argc ==2) {
-        /* argc ==2 then first name is the application name and second name 
-        is assumed to be the filename 
-        */
-        filename = argv[1];
-    }
-    /* In default case new file should get open , 
-    and ask name only when the time to save*/
-    
-    runEditor(filename);
-          
+int main(int argc , char* argv[]){ 
+    initUI();   
+    for (int i =1;i<argc;i++){
+        runEditor(argv[i],i,argc);
+    } 
 }

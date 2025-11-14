@@ -7,7 +7,7 @@ void initUI();
 void shutdownUI();
 void drawTitle(WINDOW* win, const std::string& filename);
 void drawFooter(WINDOW* win);
-void runEditor(const std::string& filename);
-void showMenu();
+void runEditor(const std::string& filename,const int& filec, const int&filet);
+
 
 #endif

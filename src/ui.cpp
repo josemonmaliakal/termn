@@ -2,6 +2,7 @@
 #include <fstream>
 #include <vector>
 #include <iostream>
+#include <sstream>
 
 using namespace std;
 
@@ -34,7 +35,7 @@ void drawFooter(WINDOW* win) {
     wrefresh(win);
 }
 
-void runEditor(const string& initialFilename) {
+void runEditor(const string& initialFilename, const int& filec, const int&filet) {
     int height, width;
     string filename = initialFilename;
     string saveMsg = "File Cancelled!";
@@ -46,8 +47,11 @@ void runEditor(const string& initialFilename) {
     WINDOW* footer   = newwin(1, width, height - 1, 0);
 
     scrollok(textwin, TRUE);
-
-    drawTitle(titlebar, filename.empty() ? "[New File]" : filename);
+    std::ostringstream tstring;
+    tstring << "[FILES " << filec << "/" << (filet - 1) << "] "\
+          << (filename.empty() ? "[New File]" : filename);
+    std::string title = tstring.str();
+    drawTitle(titlebar,title);
     drawFooter(footer);
 
 
