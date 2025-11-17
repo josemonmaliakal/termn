@@ -47,6 +47,10 @@ void runEditor(const string& initialFilename, const int& filec, const int&filet)
     WINDOW* footer   = newwin(1, width, height - 1, 0);
 
     scrollok(textwin, TRUE);
+    // Enable keypad mode once 
+    // To support arrow-key cursor movement inside  ncurses
+    keypad(textwin, TRUE);
+
     std::ostringstream tstring;
     tstring << "[FILES " << filec << "/" << (filet - 1) << "] "\
           << (filename.empty() ? "[New File]" : filename);
@@ -74,6 +78,35 @@ void runEditor(const string& initialFilename, const int& filec, const int&filet)
     int ch;
 
     while ((ch = wgetch(textwin)) != 24) { // Ctrl+X
+        
+        int y, x;
+        // getting y,x position 
+        getyx(textwin, y, x);
+        // variable to track movement to avoid refresh after every keystroke 
+        bool moved = false;
+        switch (ch){
+            // Handling Arrow keys 
+            case KEY_LEFT:
+                if (x > 0){x--;moved = true;}
+                break;
+            case KEY_RIGHT:
+                x++; 
+                moved = true;
+                break;
+            case KEY_UP:
+                if (y > 0){y--;moved = true;}
+                break;
+            case KEY_DOWN:
+                y++; 
+                moved = true;
+                break;
+        }
+        if (moved){
+            wmove(textwin, y, x);   // cheap
+            wrefresh(textwin);      // expensive — do only when necessary
+            continue;
+        }
+
         if (ch == 19) { // Ctrl+S
             // Ask for filename if none
             if (filename.empty()) {

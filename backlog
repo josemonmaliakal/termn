@@ -1,3 +1,4 @@
-1.BUGFIX :  When editing an existing file, new file comes 
-2. Give good colors 
-4. Generate patterned files 
+1. Give good colors 
+2. Generate patterned files 
+4. from minimized window to maximize window layout changes and vice versa 
+5. Bug Fix : Pressing Enter Removes original content 
