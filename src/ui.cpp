@@ -34,6 +34,20 @@ void drawFooter(WINDOW* win) {
     wattroff(win, A_REVERSE);
     wrefresh(win);
 }
+auto escapeControlChars = [](const string &s){
+    string out ;
+    for (unsigned char c:s){
+        if (c<32){
+            out+='^';
+            out+=char(c+64);// 0x01→^A, 0x02→^B, 0x03→^C...
+        }else if (c == 127) {        // DEL character
+            out += "^?";
+        } else {
+            out += c;
+        }
+    }
+    return out;
+};
 
 void runEditor(const string& initialFilename, const int& filec, const int&filet) {
     int height, width;
@@ -69,7 +83,8 @@ void runEditor(const string& initialFilename, const int& filec, const int&filet)
         string line;
         while (getline(infile, line )){
             buffer.push_back(line);
-            wprintw(textwin, "%s\n", line.c_str());
+            string safeLine = escapeControlChars(line);
+            wprintw(textwin, "%s\n", safeLine.c_str());
 
         }
         infile.close();
@@ -99,7 +114,35 @@ void runEditor(const string& initialFilename, const int& filec, const int&filet)
             case KEY_DOWN:
                 y++; 
                 moved = true;
+                break;                
+            case '\n': // Enter Key 
+                buffer.push_back(currentLine);
+                currentLine.clear();
+                waddch(textwin, '\n');
+                moved = true;
                 break;
+            case KEY_BACKSPACE : 
+                if (x > 0) {mvwdelch(textwin, y, x - 1);x--;}
+                if (x == 0 and y>0){
+                    // First save current line, then remove it from buffer
+                    std::string lineToMerge = currentLine;
+                    currentLine = buffer[y - 1];   
+                    int oldLen = currentLine.length();
+                    currentLine += lineToMerge;     // merge lines
+                    buffer.erase(buffer.begin() + y - 1);
+                    buffer.insert(buffer.begin() + (y - 1), currentLine);
+                    y--;
+                    x = oldLen;
+                }
+                moved = true;                
+                break;
+            case 19: //SAVE
+                
+                break;
+            default:
+                currentLine.push_back((char)ch);
+                waddch(textwin, ch);
+               
         }
         if (moved){
             wmove(textwin, y, x);   // cheap
@@ -139,23 +182,6 @@ void runEditor(const string& initialFilename, const int& filec, const int&filet)
             wrefresh(footer);
             continue;
         }
-
-        if (ch == '\n') {
-            buffer.push_back(currentLine);
-            currentLine.clear();
-            waddch(textwin, '\n');
-        } else if (ch == KEY_BACKSPACE || ch == 127) {
-            if (!currentLine.empty()) {
-                currentLine.pop_back();
-                int y, x;
-                getyx(textwin, y, x);
-                if (x > 0) mvwdelch(textwin, y, x - 1);
-            }
-        } else {
-            currentLine.push_back((char)ch);
-            waddch(textwin, ch);
-        }
-        wrefresh(textwin);
     }
 
     if (!currentLine.empty()) buffer.push_back(currentLine);
